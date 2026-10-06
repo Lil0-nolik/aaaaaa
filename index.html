@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR-панель: сотрудники, вакансии, отклики</title>
-
+  <title>HR-панель</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ШАПКА -->
   <header class="header">
     <h1>HR-панель</h1>
     <nav class="nav" aria-label="Основная навигация">
@@ -23,7 +20,6 @@
     </nav>
   </header>
 
-  <!-- БОКОВАЯ ПАНЕЛЬ -->
   <aside class="sidebar" aria-label="Боковая навигация">
     <h2>Разделы</h2>
     <ul>
@@ -31,7 +27,6 @@
       <li><a href="#vacancies">Вакансии</a></li>
       <li><a href="#responses">Отклики</a></li>
     </ul>
-
     <h2>Статусы</h2>
     <ul>
       <li><span class="status status--info">На рассмотрении</span></li>
@@ -41,7 +36,6 @@
     </ul>
   </aside>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
   <main class="main">
 
     <!-- СОТРУДНИКИ -->
@@ -64,11 +58,8 @@
           <input type="checkbox" name="onlyOpen">
           <span class="check__box"></span> Только открытые
         </label>
-        <fieldset>
-          <legend>Вид</legend>
-          <label class="check"><input type="radio" name="view" value="table" checked><span class="check__box"></span> Таблица</label>
-          <label class="check"><input type="radio" name="view" value="cards"><span class="check__box"></span> Карточки</label>
-        </fieldset>
+        <label class="check"><input type="radio" name="view-w" value="table" checked><span class="check__box"></span> Таблица</label>
+        <label class="check"><input type="radio" name="view-w" value="cards"><span class="check__box"></span> Карточки</label>
         <button type="reset">Сбросить</button>
       </form>
 
@@ -113,11 +104,8 @@
           <input type="checkbox" name="onlyOpen">
           <span class="check__box"></span> Только открытые
         </label>
-        <fieldset>
-          <legend>Вид</legend>
-          <label class="check"><input type="radio" name="view" value="table" checked><span class="check__box"></span> Таблица</label>
-          <label class="check"><input type="radio" name="view" value="cards"><span class="check__box"></span> Карточки</label>
-        </fieldset>
+        <label class="check"><input type="radio" name="view-v" value="table" checked><span class="check__box"></span> Таблица</label>
+        <label class="check"><input type="radio" name="view-v" value="cards"><span class="check__box"></span> Карточки</label>
         <button type="reset">Сбросить</button>
       </form>
 
@@ -161,11 +149,8 @@
           <input type="checkbox" name="onlyOpen">
           <span class="check__box"></span> Только открытые
         </label>
-        <fieldset>
-          <legend>Вид</legend>
-          <label class="check"><input type="radio" name="view" value="table" checked><span class="check__box"></span> Таблица</label>
-          <label class="check"><input type="radio" name="view" value="cards"><span class="check__box"></span> Карточки</label>
-        </fieldset>
+        <label class="check"><input type="radio" name="view-r" value="table" checked><span class="check__box"></span> Таблица</label>
+        <label class="check"><input type="radio" name="view-r" value="cards"><span class="check__box"></span> Карточки</label>
         <button type="reset">Сбросить</button>
       </form>
 
@@ -191,12 +176,10 @@
 
   </main>
 
-  <!-- ПОДВАЛ -->
   <footer class="footer">
-    <p>© 2026 HR-панель · Обновлено: <time datetime="2026-10-05">5 октября 2026</time></p>
+    <p>© 2026 HR-панель</p>
   </footer>
 
-  <!-- МОДАЛЬНОЕ ОКНО -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal__box">
       <div class="modal__head">
