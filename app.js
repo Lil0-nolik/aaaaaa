@@ -4,14 +4,14 @@ import { strokaSotrudnika, strokaVakansii, strokaOtklika } from "./render.js";
 // Zapolnit <tbody> strokami
 function zapolnit(idTbody, dannye, funkciyaStroki) {
   const tbody = document.getElementById(idTbody);
-  dannye.forEach(element => tbody.appendChild(funkciyaStroki(element)));
+  dannye.forEach(el => tbody.appendChild(funkciyaStroki(el)));
 }
 
 zapolnit("workers-body",   rab,     strokaSotrudnika);
 zapolnit("vacancies-body", vacansi, strokaVakansii);
 zapolnit("responses-body", otkliki, strokaOtklika);
 
-// === Модалка ===
+// ===== МОДАЛКА =====
 const modal = document.getElementById("modal");
 const modalBody = document.getElementById("modal-body");
 let lastFocused = null;
@@ -41,25 +41,30 @@ document.addEventListener("keydown", e => {
   if (e.key === "Tab") trapFocus(e);
 });
 
-// Focus trap
 function trapFocus(e) {
-  const f = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const f = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
   if (!f.length) return;
   const first = f[0], last = f[f.length - 1];
-  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault(); last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault(); first.focus();
+  }
 }
 
-// Клик по строке → модалка
+// ===== КЛИК ПО СТРОКЕ → МОДАЛКА =====
 document.querySelectorAll(".table tbody").forEach(tbody => {
   tbody.addEventListener("click", e => {
     const tr = e.target.closest("tr");
     if (!tr) return;
-    const cells = [...tr.children].map(td => td.textContent);
+    const cells = [...tr.children].map(td => td.textContent.trim());
     openModal("Детали записи", cells.map(c => `<p>${c}</p>`).join(""));
   });
 });
 
+// ===== СОРТИРОВКА =====
 document.querySelectorAll(".table th").forEach((th, i) => {
   th.dataset.sort = "";
   th.addEventListener("click", () => {
@@ -79,29 +84,38 @@ document.querySelectorAll(".table th").forEach((th, i) => {
   });
 });
 
-document.querySelectorAll(".filters").forEach(form => {
-  const tbody = form.parentElement.querySelector("tbody");
-  const allRows = [...tbody.rows]; // сохранить исходный порядок
+// ===== ФИЛЬТРЫ В КАЖДОЙ СЕКЦИИ =====
+document.querySelectorAll(".section").forEach(section => {
+  const form = section.querySelector(".filters");
+  const tbody = section.querySelector("tbody");
+  if (!form || !tbody) return;
+
+  const allRows = [...tbody.rows];
 
   function apply() {
     const q = form.q.value.trim().toLowerCase();
     const st = form.status.value;
     const onlyOpen = form.onlyOpen?.checked;
+
     allRows.forEach(tr => {
       const text = tr.textContent.toLowerCase();
       const badge = tr.querySelector(".status");
       const status = badge ? badge.textContent : "";
+
       const ok =
         (!q || text.includes(q)) &&
         (!st || status === st) &&
         (!onlyOpen || status === "В поиске");
+
       tr.style.display = ok ? "" : "none";
     });
   }
+
   form.addEventListener("input", apply);
   form.addEventListener("reset", () => setTimeout(apply, 0));
 });
 
+// ===== ПЕРЕКЛЮЧЕНИЕ ВИДА: Таблица / Карточки =====
 document.querySelectorAll('input[name="view"]').forEach(r => {
   r.addEventListener("change", () => {
     const table = r.closest(".section").querySelector(".table");

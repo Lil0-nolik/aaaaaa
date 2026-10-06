@@ -21,25 +21,33 @@ function klassStatusa(status) {
   }
 }
 
+// Universal: sozdat td s data-label
+function td(label, value) {
+  const cell = sozdat("td", value);
+  cell.dataset.label = label;
+  return cell;
+}
+
 // Stroka tablicy: sotrudnik
 export function strokaSotrudnika(w) {
   const tr = document.createElement("tr");
 
-  tr.appendChild(sozdat("td", w.id));
-  tr.appendChild(sozdat("td", w.Name));
-  tr.appendChild(sozdat("td", w.Familia));
-  tr.appendChild(sozdat("td", w.Rabota));
-  tr.appendChild(sozdat("td", w.Iziki.join(", ")));
-  tr.appendChild(sozdat("td", w.Zp));
-  tr.appendChild(sozdat("td", w.Posta));
+  tr.appendChild(td("ID", w.id));
+  tr.appendChild(td("Имя", w.Name));
+  tr.appendChild(td("Фамилия", w.Familia));
+  tr.appendChild(td("Должность", w.Rabota));
+  tr.appendChild(td("Языки", w.Iziki.join(", ")));
+  tr.appendChild(td("Зарплата", w.Zp));
+  tr.appendChild(td("Почта", w.Posta));
 
   const vremya = sozdat("time", w.Data);
   vremya.setAttribute("datetime", w.Data);
-  const tdData = document.createElement("td");
+  const tdData = td("Дата приёма", "");
+  tdData.textContent = "";
   tdData.appendChild(vremya);
   tr.appendChild(tdData);
 
-  tr.appendChild(sozdat("td", w.Otdel.name));
+  tr.appendChild(td("Отдел", w.Otdel.name));
 
   return tr;
 }
@@ -48,20 +56,22 @@ export function strokaSotrudnika(w) {
 export function strokaVakansii(v) {
   const tr = document.createElement("tr");
 
-  tr.appendChild(sozdat("td", v.id));
-  tr.appendChild(sozdat("td", v.Dolznost));
-  tr.appendChild(sozdat("td", v.MinZp));
-  tr.appendChild(sozdat("td", v.MaxZp));
-  tr.appendChild(sozdat("td", v.Otdel));
-  tr.appendChild(sozdat("td", v.Iziki.join(", ")));
+  tr.appendChild(td("ID", v.id));
+  tr.appendChild(td("Должность", v.Dolznost));
+  tr.appendChild(td("Мин. ЗП", v.MinZp));
+  tr.appendChild(td("Макс. ЗП", v.MaxZp));
+  tr.appendChild(td("Отдел", v.Otdel));
+  tr.appendChild(td("Языки", v.Iziki.join(", ")));
 
   const vremya = sozdat("time", v.Do);
   vremya.setAttribute("datetime", v.Do);
-  const tdData = document.createElement("td");
+  const tdData = td("Актуальна до", "");
+  tdData.textContent = "";
   tdData.appendChild(vremya);
   tr.appendChild(tdData);
 
-  const tdStatus = document.createElement("td");
+  const tdStatus = td("Статус", "");
+  tdStatus.textContent = "";
   tdStatus.appendChild(sozdat("span", v.Status, klassStatusa(v.Status)));
   tr.appendChild(tdStatus);
 
@@ -72,23 +82,25 @@ export function strokaVakansii(v) {
 export function strokaOtklika(r) {
   const tr = document.createElement("tr");
 
-  tr.appendChild(sozdat("td", r.id));
-  tr.appendChild(sozdat("td", r.RabId));
-  tr.appendChild(sozdat("td", r.VacansiId));
+  tr.appendChild(td("ID", r.id));
+  tr.appendChild(td("Сотрудник (ID)", r.RabId));
+  tr.appendChild(td("Вакансия (ID)", r.VacansiId));
 
   const vremya = sozdat("time", r.DataOtk);
   vremya.setAttribute("datetime", r.DataOtk);
-  const tdData = document.createElement("td");
+  const tdData = td("Дата отклика", "");
+  tdData.textContent = "";
   tdData.appendChild(vremya);
   tr.appendChild(tdData);
 
-  const tdStatus = document.createElement("td");
+  const tdStatus = td("Статус", "");
+  tdStatus.textContent = "";
   tdStatus.appendChild(sozdat("span", r.Status, klassStatusa(r.Status)));
   tr.appendChild(tdStatus);
 
-  tr.appendChild(sozdat("td", r.Koment));
-  tr.appendChild(sozdat("td", r.Rezyume));
-  tr.appendChild(sozdat("td", r.Ocenka));
+  tr.appendChild(td("Комментарий", r.Koment));
+  tr.appendChild(td("Резюме", r.Rezyume));
+  tr.appendChild(td("Оценка", r.Ocenka));
 
   return tr;
 }
