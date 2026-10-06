@@ -332,3 +332,15 @@ body.no-scroll { overflow: hidden; }
 }
 .card:hover { box-shadow: var(--shadow-2); }
 .card:active { transform: scale(0.99); }
+
+.table.is-cards thead { display: none; }
+.table.is-cards tbody, .table.is-cards tr, .table.is-cards td { display: block; width: auto; }
+.table.is-cards tr {
+  border: 1px solid var(--border-1); border-radius: var(--radius-3);
+  margin-bottom: var(--space-3); padding: var(--space-3); background: var(--bg-2);
+}
+.table.is-cards td { border: 0; padding: var(--space-1) 0; }
+.table.is-cards td::before {
+  content: attr(data-label) ": ";
+  font-weight: 600; color: var(--text-2);
+}

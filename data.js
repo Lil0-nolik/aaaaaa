@@ -60,7 +60,7 @@ export const vacansi = [
   { id: 6, Dolznost: "Analitik", MinZp: 90000, MaxZp: 140000, Otdel: "Analytics",
     Iziki: ["SQL", "Excel", "Python"], Do: "2030-02-28", Status: "Отказ" },
   { id: 7, Dolznost: "Project Manager", MinZp: 130000, MaxZp: 190000, Otdel: "Management",
-    Iziki: ["Jira", "Scrum"], Do: "2028-11-05", Status: "закрыта" },
+    Iziki: ["Jira", "Scrum"], Do: "2028-11-05", Status: "Закрыта" },
   { id: 8, Dolznost: "Disaner", MinZp: 85000, MaxZp: 130000, Otdel: "Design",
     Iziki: ["Figma", "Photoshop"], Do: "2029-07-22", Status: "В поиске" },
   { id: 9, Dolznost: "HR", MinZp: 60000, MaxZp: 95000, Otdel: "HR",
