@@ -11,14 +11,12 @@ function klassStatusa(status) {
     case "Приглашение":
     case "Принят":
       return "status status--success";
-    case "На рассмотрении":
     case "В поиске":
       return "status status--warning";
     case "Отказ":
     case "Закрыта":
-    case "закрыта":
       return "status status--danger";
-    default:
+    case "На рассмотрении":
       return "status status--info";
   }
 }
