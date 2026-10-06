@@ -8,9 +8,9 @@ function sozdat(tag, tekst, klass) {
 
 // Klass dlya statusa
 function klassStatusa(status) {
-  if (status === "Priglashen" || status === "Otkryta")       return "status status--success";
-  if (status === "Na rassmotrenii" || status === "V poeske") return "status status--warning";
-  if (status === "Otkazan" || status === "Zakryta")          return "status status--danger";
+  if (status === "Приглашен" || status === "Отказ")       return "status status--success";
+  if (status === "На рассмотрении" || status === "В проекте") return "status status--warning";
+  if (status === "Отказ" || status === "Закрыта")          return "status status--danger";
   return "status status--info";
 }
 
