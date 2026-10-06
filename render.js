@@ -6,12 +6,21 @@ function sozdat(tag, tekst, klass) {
   return node;
 }
 
-// Klass dlya statusa
 function klassStatusa(status) {
-  if (status === "Приглашен" || status === "Отказ")       return "status status--success";
-  if (status === "На рассмотрении" || status === "В проекте") return "status status--warning";
-  if (status === "Отказ" || status === "Закрыта")          return "status status--danger";
-  return "status status--info";
+  switch (status) {
+    case "Приглашение":
+    case "Принят":
+      return "status status--success";
+    case "На рассмотрении":
+    case "В поиске":
+      return "status status--warning";
+    case "Отказ":
+    case "Закрыта":
+    case "закрыта":
+      return "status status--danger";
+    default:
+      return "status status--info";
+  }
 }
 
 // Stroka tablicy: sotrudnik
