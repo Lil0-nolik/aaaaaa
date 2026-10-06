@@ -68,6 +68,9 @@ table { border-collapse: collapse; width: 100%; }
   --font-lg: 20px;
   --font-xl: 26px;
   --font-2xl: 34px;
+
+
+  --focus: #2563eb;
 }
 
 /* ===== Базовая типографика ===== */
@@ -213,3 +216,119 @@ body {
       "footer";
   }
 }
+
+/* Плавность для всех интерактивных */
+a, button, input, select, .table tbody tr, .status {
+  transition: background-color .2s, color .2s, box-shadow .2s, transform .1s;
+}
+
+/* Focus — кастомный */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+tr:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-1);
+}
+
+/* Active */
+button:active { transform: scale(0.98); }
+
+/* Disabled */
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Чередование */
+.table tbody tr:nth-child(even) { background: var(--bg-3); }
+
+/* Sticky первая колонка */
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--bg-2);
+  z-index: 1;
+}
+.table thead th:first-child { background: var(--bg-3); z-index: 2; }
+
+/* Горизонтальный скролл */
+.table-wrap { overflow-x: auto; }
+
+/* Индикатор сортировки */
+.table th[data-sort] { cursor: pointer; user-select: none; }
+.table th[data-sort]::after { content: " ⇅"; color: var(--text-3); }
+.table th[data-sort="asc"]::after  { content: " ↑"; color: var(--accent); }
+.table th[data-sort="desc"]::after { content: " ↓"; color: var(--accent); }
+
+.filters {
+  display: flex; flex-wrap: wrap; gap: var(--space-3);
+  margin-bottom: var(--space-4); align-items: center;
+}
+.filters label { font-size: var(--font-sm); color: var(--text-2); }
+
+.filters input[type="search"],
+.filters select {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-2);
+  background: var(--bg-2);
+}
+
+/* Кастомный чекбокс */
+.check { display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+.check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.check__box {
+  width: 18px; height: 18px;
+  border: 2px solid var(--border-2);
+  border-radius: var(--radius-1);
+  display: inline-block; position: relative;
+  transition: background .2s, border-color .2s;
+}
+.check input:checked + .check__box {
+  background: var(--accent); border-color: var(--accent);
+}
+.check input:checked + .check__box::after {
+  content: ""; position: absolute;
+  left: 4px; top: 1px; width: 5px; height: 10px;
+  border: solid #fff; border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.check input:focus-visible + .check__box { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.modal {
+  position: fixed; inset: 0;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,.5);
+  z-index: 100;
+}
+.modal.is-open { display: flex; }
+.modal__box {
+  background: var(--bg-2); border-radius: var(--radius-3);
+  box-shadow: var(--shadow-3);
+  max-width: 560px; width: 90%; max-height: 85vh;
+  display: flex; flex-direction: column;
+}
+.modal__head, .modal__foot {
+  padding: var(--space-4); border-bottom: 1px solid var(--border-1);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal__foot { border-bottom: 0; border-top: 1px solid var(--border-1); justify-content: flex-end; gap: var(--space-3); }
+.modal__body { padding: var(--space-4); overflow: auto; }
+
+body.no-scroll { overflow: hidden; }
+
+/* Карточки (для радио view=cards) */
+.cards { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); }
+.card {
+  border: 1px solid var(--border-1); border-radius: var(--radius-3);
+  padding: var(--space-4); background: var(--bg-2); box-shadow: var(--shadow-1);
+  cursor: pointer; transition: box-shadow .2s, transform .1s;
+}
+.card:hover { box-shadow: var(--shadow-2); }
+.card:active { transform: scale(0.99); }

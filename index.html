@@ -13,6 +13,29 @@
 </head>
 <body>
 
+  <form class="filters" onsubmit="return false">
+  <label>Поиск
+    <input type="search" name="q" placeholder="Введите текст…">
+  </label>
+  <label>Статус
+    <select name="status">
+      <option value="">Все</option>
+      <option>В поиске</option>
+      <option>Отказ</option>
+      <option>Закрыта</option>
+    </select>
+  </label>
+  <label class="check">
+    <input type="checkbox" name="onlyOpen">
+    <span class="check__box"></span> Только открытые
+  </label>
+  <fieldset>
+    <label class="check"><input type="radio" name="view" value="table" checked><span class="check__box"></span> Таблица</label>
+    <label class="check"><input type="radio" name="view" value="cards"><span class="check__box"></span> Карточки</label>
+  </fieldset>
+  <button type="reset">Сбросить</button>
+</form>
+
   <!-- ШАПКА -->
   <header class="header">
     <h1>HR-панель</h1>
@@ -119,5 +142,18 @@
   </footer>
 
   <script type="module" src="app.js"></script>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal__box">
+    <div class="modal__head">
+      <h3 id="modal-title">Детали</h3>
+      <button type="button" class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="modal__body" id="modal-body"></div>
+    <div class="modal__foot">
+      <button type="button" class="modal__close">Закрыть</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
