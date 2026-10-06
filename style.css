@@ -251,7 +251,7 @@ button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .modal__close:hover { background: var(--bg-3); }
 body.no-scroll { overflow: hidden; }
 
-/* ==== Карточки (режим radio "Карточки" + мобильные) ==== */
+/* ==== Карточки (режим radio "Карточки" + мобильные через JS) ==== */
 .table.is-cards thead { display: none; }
 .table.is-cards tbody,
 .table.is-cards tr,
@@ -261,6 +261,10 @@ body.no-scroll { overflow: hidden; }
   border-radius: var(--r-3);
   margin-bottom: var(--sp-3);
   padding: var(--sp-3);
+  background: var(--bg-2);
+}
+.table.is-cards tbody tr:nth-child(even),
+.table.is-cards tbody tr:hover {
   background: var(--bg-2);
 }
 .table.is-cards td { border: 0; padding: var(--sp-1) 0; }
@@ -276,19 +280,5 @@ body.no-scroll { overflow: hidden; }
   body {
     grid-template-columns: 1fr;
     grid-template-areas: "header" "sidebar" "main" "footer";
-  }
-  .table thead { display: none; }
-  .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
-  .table tr {
-    border: 1px solid var(--border);
-    border-radius: var(--r-3);
-    margin-bottom: var(--sp-3);
-    padding: var(--sp-3);
-    background: var(--bg-2) !important;
-  }
-  .table td { border: 0; padding: var(--sp-1) 0; }
-  .table td::before {
-    content: attr(data-label) ": ";
-    font-weight: 600; color: var(--text-2);
   }
 }

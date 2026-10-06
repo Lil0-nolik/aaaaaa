@@ -16,14 +16,12 @@ function klassStatusa(status) {
   }
 }
 
-// td с data-label (для карточек на мобильных)
 function td(label, value) {
   const cell = sozdat("td", value);
   cell.dataset.label = label;
   return cell;
 }
 
-// td с вложенным элементом (time / span)
 function tdUz(el, label) {
   const cell = document.createElement("td");
   cell.dataset.label = label;
