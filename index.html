@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>HR-панель</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,9 @@
 <body>
 
   <header class="header">
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="sidebar">
+      <span></span><span></span><span></span>
+    </button>
     <h1>HR-панель</h1>
     <nav class="nav" aria-label="Основная навигация">
       <a href="#workers">Сотрудники</a>
@@ -20,7 +23,7 @@
     </nav>
   </header>
 
-  <aside class="sidebar" aria-label="Боковая навигация">
+  <aside class="sidebar" id="sidebar" aria-label="Боковая навигация">
     <h2>Разделы</h2>
     <ul>
       <li><a href="#workers">Сотрудники</a></li>
@@ -35,6 +38,8 @@
       <li><span class="status status--warning">В поиске</span></li>
     </ul>
   </aside>
+
+  <div class="overlay" id="overlay" hidden></div>
 
   <main class="main">
 

@@ -10,6 +10,30 @@ zapolnit("workers-body",   rab,     strokaSotrudnika);
 zapolnit("vacancies-body", vacansi, strokaVakansii);
 zapolnit("responses-body", otkliki, strokaOtklika);
 
+/* ===== БУРГЕР-МЕНЮ ===== */
+const burger  = document.querySelector(".burger");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("overlay");
+
+function toggleMenu(open) {
+  sidebar.classList.toggle("is-open", open);
+  overlay.classList.toggle("is-open", open);
+  overlay.hidden = !open;
+  burger.classList.toggle("is-active", open);
+  burger.setAttribute("aria-expanded", String(open));
+  document.body.classList.toggle("no-scroll", open);
+}
+
+burger.addEventListener("click", () =>
+  toggleMenu(!sidebar.classList.contains("is-open"))
+);
+overlay.addEventListener("click", () => toggleMenu(false));
+
+/* Закрытие меню по клику на ссылку (мобильная навигация) */
+sidebar.querySelectorAll("a").forEach(a =>
+  a.addEventListener("click", () => toggleMenu(false))
+);
+
 /* ===== МОДАЛКА ===== */
 const modal     = document.getElementById("modal");
 const modalBody = document.getElementById("modal-body");
@@ -34,10 +58,20 @@ modal.addEventListener("click", e => {
   if (e.target === modal || e.target.closest(".modal__close")) closeModal();
 });
 
+/* ===== Escape + focus-trap для модалки и меню ===== */
 document.addEventListener("keydown", e => {
+  /* Escape — закрыть меню */
+  if (e.key === "Escape" && sidebar.classList.contains("is-open")) {
+    toggleMenu(false);
+    burger.focus();
+    return;
+  }
+
+  /* Escape + Tab — внутри модалки */
   if (!modal.classList.contains("is-open")) return;
   if (e.key === "Escape") return closeModal();
   if (e.key !== "Tab") return;
+
   const f = modal.querySelectorAll("button, [href], input, select, textarea");
   if (!f.length) return;
   const first = f[0], last = f[f.length - 1];
@@ -108,13 +142,3 @@ document.querySelectorAll(".section").forEach(section => {
     });
   });
 });
-
-/* ===== АДАПТИВ: таблицы → карточки на узких экранах ===== */
-const mq = matchMedia("(max-width: 768px)");
-const syncCards = () => {
-  document.querySelectorAll(".table").forEach(t =>
-    t.classList.toggle("is-cards", mq.matches)
-  );
-};
-mq.addEventListener("change", syncCards);
-syncCards();
