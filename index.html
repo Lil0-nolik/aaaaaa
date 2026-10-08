@@ -4,6 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>HR-панель</title>
+
+  <!-- Тема применяется ДО рендера DOM (без вспышки) -->
+  <script>
+    (function () {
+      var THEME_KEY = "hr-theme";
+      var ACCENT_KEY = "hr-accent";
+      var root = document.documentElement;
+
+      function hexToRgbString(hex) {
+        var h = String(hex).replace("#", "");
+        if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+        var n = parseInt(h, 16);
+        return ((n >> 16) & 255) + ", " + ((n >> 8) & 255) + ", " + (n & 255);
+      }
+
+      // Тема: сохранённая → системная → light
+      var saved = null;
+      try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+      var theme = saved;
+      if (!theme) {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
+      root.setAttribute("data-theme", theme);
+
+      // Акцент: сохранённый → дефолт из CSS
+      var accent = null;
+      try { accent = localStorage.getItem(ACCENT_KEY); } catch (e) {}
+      if (accent) {
+        root.style.setProperty("--accent", accent);
+        root.style.setProperty("--accent-rgb", hexToRgbString(accent));
+      }
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,12 +51,30 @@
     <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="sidebar">
       <span></span><span></span><span></span>
     </button>
+
     <h1>HR-панель</h1>
+
     <nav class="nav" aria-label="Основная навигация">
       <a href="#workers">Сотрудники</a>
       <a href="#vacancies">Вакансии</a>
       <a href="#responses">Отклики</a>
     </nav>
+
+    <div class="theme-controls">
+      <label class="theme-picker" title="Тема">
+        <span class="visually-hidden">Тема</span>
+        <select id="theme-select" aria-label="Выбор темы">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="corporate">Corporate Blue</option>
+        </select>
+      </label>
+
+      <label class="accent-picker" title="Акцентный цвет">
+        <span class="visually-hidden">Акцентный цвет</span>
+        <input type="color" id="accent-input" value="#2563eb" aria-label="Акцентный цвет">
+      </label>
+    </div>
   </header>
 
   <aside class="sidebar" id="sidebar" aria-label="Боковая навигация">
