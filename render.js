@@ -1,82 +1,95 @@
-function sozdat(tag, tekst, klass) {
-  const node = document.createElement(tag);
-  if (tekst !== undefined && tekst !== null) node.textContent = tekst;
-  if (klass) node.className = klass;
-  return node;
+function el(tag, text, cls) {
+  const n = document.createElement(tag);
+  if (text != null) n.textContent = text;
+  if (cls) n.className = cls;
+  return n;
 }
 
-function klassStatusa(status) {
-  switch (status) {
-    case "Приглашение":
-    case "Принят":          return "status status--success";
-    case "В поиске":        return "status status--warning";
-    case "Отказ":
-    case "Закрыта":         return "status status--danger";
+function statusClass(s) {
+  switch (s) {
+    case "Приглашение": case "Принят": return "status status--success";
+    case "В поиске": return "status status--warning";
+    case "Отказ": case "Закрыта": return "status status--danger";
     case "На рассмотрении": return "status status--info";
   }
+  return "status";
 }
 
 function td(label, value) {
-  const cell = sozdat("td", value);
-  cell.dataset.label = label;
-  return cell;
+  const c = el("td", value);
+  c.dataset.label = label;
+  return c;
 }
-
-function tdUz(el, label) {
-  const cell = document.createElement("td");
-  cell.dataset.label = label;
-  cell.appendChild(el);
-  return cell;
+function tdEl(node, label) {
+  const c = document.createElement("td");
+  c.dataset.label = label;
+  c.appendChild(node);
+  return c;
 }
 
 export function strokaSotrudnika(w) {
   const tr = document.createElement("tr");
-  tr.appendChild(td("ID", w.id));
-  tr.appendChild(td("Имя", w.Name));
-  tr.appendChild(td("Фамилия", w.Familia));
-  tr.appendChild(td("Должность", w.Rabota));
-  tr.appendChild(td("Языки", w.Iziki.join(", ")));
-  tr.appendChild(td("Зарплата", w.Zp));
-  tr.appendChild(td("Почта", w.Posta));
-
-  const t = sozdat("time", w.Data);
+  tr.append(
+    td("ID", w.id), td("Имя", w.Name), td("Фамилия", w.Familia),
+    td("Должность", w.Rabota), td("Языки", w.Iziki.join(", ")),
+    td("Зарплата", w.Zp), td("Почта", w.Posta)
+  );
+  const t = el("time", w.Data);
   t.setAttribute("datetime", w.Data);
-  tr.appendChild(tdUz(t, "Дата приёма"));
-
+  tr.appendChild(tdEl(t, "Дата приёма"));
   tr.appendChild(td("Отдел", w.Otdel.name));
+  return tr;
+}
+
+export function strokaSotrudnikaIt(w) {
+  const tr = document.createElement("tr");
+  tr.append(td("ID", w.id), td("Имя", w.Name),
+            td("Фамилия", w.Familia), td("Должность", w.Rabota),
+            td("Зарплата", w.Zp));
+  return tr;
+}
+
+export function strokaSotrudnikaHigh(w) {
+  const tr = document.createElement("tr");
+  tr.append(td("ID", w.id), td("Имя", w.Name),
+            td("Фамилия", w.Familia), td("Зарплата", w.Zp));
   return tr;
 }
 
 export function strokaVakansii(v) {
   const tr = document.createElement("tr");
-  tr.appendChild(td("ID", v.id));
-  tr.appendChild(td("Должность", v.Dolznost));
-  tr.appendChild(td("Мин. ЗП", v.MinZp));
-  tr.appendChild(td("Макс. ЗП", v.MaxZp));
-  tr.appendChild(td("Отдел", v.Otdel));
-  tr.appendChild(td("Языки", v.Iziki.join(", ")));
-
-  const t = sozdat("time", v.Do);
+  tr.append(
+    td("ID", v.id), td("Должность", v.Dolznost),
+    td("Мин. ЗП", v.MinZp), td("Макс. ЗП", v.MaxZp),
+    td("Отдел", v.Otdel), td("Языки", v.Iziki.join(", "))
+  );
+  const t = el("time", v.Do);
   t.setAttribute("datetime", v.Do);
-  tr.appendChild(tdUz(t, "Актуальна до"));
-
-  tr.appendChild(tdUz(sozdat("span", v.Status, klassStatusa(v.Status)), "Статус"));
+  tr.appendChild(tdEl(t, "Актуальна до"));
+  tr.appendChild(tdEl(el("span", v.Status, statusClass(v.Status)), "Статус"));
   return tr;
 }
 
 export function strokaOtklika(r) {
   const tr = document.createElement("tr");
-  tr.appendChild(td("ID", r.id));
-  tr.appendChild(td("Сотрудник (ID)", r.RabId));
-  tr.appendChild(td("Вакансия (ID)", r.VacansiId));
-
-  const t = sozdat("time", r.DataOtk);
+  tr.append(
+    td("ID", r.id), td("Сотрудник", r.RabId),
+    td("Вакансия", r.VacansiId)
+  );
+  const t = el("time", r.DataOtk);
   t.setAttribute("datetime", r.DataOtk);
-  tr.appendChild(tdUz(t, "Дата отклика"));
-
-  tr.appendChild(tdUz(sozdat("span", r.Status, klassStatusa(r.Status)), "Статус"));
-  tr.appendChild(td("Комментарий", r.Koment));
-  tr.appendChild(td("Резюме", r.Rezyume));
-  tr.appendChild(td("Оценка", r.Ocenka));
+  tr.appendChild(tdEl(t, "Дата"));
+  tr.appendChild(tdEl(el("span", r.Status, statusClass(r.Status)), "Статус"));
+  tr.append(
+    td("Комментарий", r.Koment), td("Резюме", r.Rezyume),
+    td("Оценка", r.Ocenka)
+  );
   return tr;
+}
+
+export function sozdatPustoe(text = "Ничего не найдено") {
+  const w = document.createElement("div");
+  w.className = "empty";
+  w.innerHTML = `<div class="empty__icon" aria-hidden="true">🔍</div><p>${text}</p>`;
+  return w;
 }
