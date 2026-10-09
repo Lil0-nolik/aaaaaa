@@ -7,16 +7,21 @@
   <script>
     (function () {
       var T = "hr-theme", A = "hr-accent", root = document.documentElement;
-      function rgb(hex){
-        var h = hex.replace("#","");
-        if (h.length === 3) h = h.split("").map(function(c){return c + c;}).join("");
+      function rgb(hex) {
+        var h = hex.replace("#", "");
+        if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
         var n = parseInt(h, 16);
-        return ((n>>16)&255) + "," + ((n>>8)&255) + "," + (n&255);
+        return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255);
       }
-      var s = null; try { s = localStorage.getItem(T); } catch(e){}
+      var s = null;
+      try { s = localStorage.getItem(T); } catch (e) {}
       root.setAttribute("data-theme", s || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
-      var a = null; try { a = localStorage.getItem(A); } catch(e){}
-      if (a) { root.style.setProperty("--accent", a); root.style.setProperty("--accent-rgb", rgb(a)); }
+      var a = null;
+      try { a = localStorage.getItem(A); } catch (e) {}
+      if (a) {
+        root.style.setProperty("--accent", a);
+        root.style.setProperty("--accent-rgb", rgb(a));
+      }
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,7 +74,6 @@
 
   <main class="main" id="main" tabindex="-1">
 
-    <!-- СОТРУДНИКИ -->
     <section id="workers" class="section">
       <div class="section__head">
         <h2>Сотрудники</h2>
@@ -133,7 +137,6 @@
       </div>
     </section>
 
-    <!-- ВАКАНСИИ -->
     <section id="vacancies" class="section">
       <h2>Вакансии</h2>
       <form class="filters" onsubmit="return false" novalidate>
@@ -163,7 +166,6 @@
       </div>
     </section>
 
-    <!-- ОТКЛИКИ -->
     <section id="responses" class="section">
       <h2>Отклики</h2>
 
@@ -200,8 +202,6 @@
           <tbody id="responses-body"></tbody>
         </table>
       </div>
-
-      <nav class="pagination" id="responses-pagination" aria-label="Постраничная навигация"></nav>
     </section>
 
   </main>

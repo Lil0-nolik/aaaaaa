@@ -6,14 +6,10 @@ function el(tag, text, cls) {
 }
 
 function statusClass(s) {
-  switch (s) {
-    case "Приглашение":
-    case "Принят":          return "status status--success";
-    case "В поиске":        return "status status--warning";
-    case "Отказ":
-    case "Закрыта":         return "status status--danger";
-    case "На рассмотрении": return "status status--info";
-  }
+  if (s === "Приглашение" || s === "Принят") return "status status--success";
+  if (s === "В поиске") return "status status--warning";
+  if (s === "Отказ" || s === "Закрыта") return "status status--danger";
+  if (s === "На рассмотрении") return "status status--info";
   return "status";
 }
 
@@ -129,7 +125,6 @@ export function sozdatPustoe(text = "Ничего не найдено") {
   return w;
 }
 
-/* --- Модалка: детальная карточка --- */
 export function detalSotrudnika(w) {
   const wrap = document.createElement("div");
   wrap.className = "detail";
@@ -199,5 +194,3 @@ export function detalOtklika(r) {
   });
   return wrap;
 }
-
-export { statusClass };
