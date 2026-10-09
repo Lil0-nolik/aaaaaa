@@ -269,4 +269,94 @@ document.querySelectorAll(".section").forEach(section => {
         const ok = (!q || text.includes(q)) &&
                    (!st || status === st) &&
                    (!onlyOpen || status === openStatus);
-        tr.style.display = ok
+        tr.style.display = ok ? "" : "none";
+      });
+    }
+    form.addEventListener("input", apply);
+    form.addEventListener("reset", () => setTimeout(apply, 0));
+  }
+
+  /* Переключение таблица/карточки */
+  section.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener("change", () => {
+      if (r.checked) table.classList.toggle("is-cards", r.value === "cards");
+    });
+  });
+
+  /* Клик по строке → модалка */
+  tbody.addEventListener("click", e => {
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const cells = [...tr.children].map(c => c.textContent.trim());
+    openModal("Детали записи", cells.map(c => `<p>${c}</p>`).join(""));
+  });
+
+  /* Сортировка по th */
+  table.querySelectorAll("th").forEach((th, i) => {
+    th.dataset.sort = "";
+    th.addEventListener("click", () => {
+      const dir = th.dataset.sort === "asc" ? "desc" : "asc";
+      th.closest("tr").querySelectorAll("th").forEach(x => x.dataset.sort = "");
+      th.dataset.sort = dir;
+
+      [...tbody.rows]
+        .sort((a, b) => {
+          const A = a.cells[i].textContent.trim();
+          const B = b.cells[i].textContent.trim();
+          const n = parseFloat(A) - parseFloat(B);
+          const cmp = !isNaN(n) ? n : A.localeCompare(B, "ru");
+          return dir === "asc" ? cmp : -cmp;
+        })
+        .forEach(r => tbody.appendChild(r));
+    });
+  });
+});
+
+/* ===== ПАГИНАЦИЯ ОТКЛИКОВ ===== */
+(function initPagination() {
+  const pag = document.getElementById("responses-pagination");
+  const tbody = document.getElementById("responses-body");
+  if (!pag || !tbody) return;
+
+  const PER_PAGE = 5;
+  let current = 1;
+  const totalPages = Math.ceil(otkliki.length / PER_PAGE);
+
+  function render() {
+    zapolnit("responses-body",
+      otkliki.slice((current - 1) * PER_PAGE, current * PER_PAGE),
+      strokaOtklika);
+    renderBtns();
+  }
+
+  function renderBtns() {
+    pag.replaceChildren();
+    const prev = document.createElement("button");
+    prev.type = "button";
+    prev.textContent = "←";
+    prev.disabled = current === 1;
+    prev.setAttribute("aria-label", "Предыдущая страница");
+    prev.addEventListener("click", () => { current--; render(); });
+    pag.appendChild(prev);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = i;
+      if (i === current) b.setAttribute("aria-current", "page");
+      b.setAttribute("aria-label", `Страница ${i}`);
+      b.addEventListener("click", () => { current = i; render(); });
+      pag.appendChild(b);
+    }
+
+    const next = document.createElement("button");
+    next.type = "button";
+    next.textContent = "→";
+    next.disabled = current === totalPages;
+    next.setAttribute("aria-label", "Следующая страница");
+    next.addEventListener("click", () => { current++; render(); });
+    pag.appendChild(next);
+  }
+
+  render();
+})();
