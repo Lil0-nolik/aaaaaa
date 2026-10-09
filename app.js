@@ -5,7 +5,10 @@ import {
   strokaSotrudnikaHigh,
   strokaVakansii,
   strokaOtklika,
-  sozdatPustoe
+  sozdatPustoe,
+  detalSotrudnika,
+  detalVakansii,
+  detalOtklika
 } from "./render.js";
 
 /* ==================== TOAST ==================== */
@@ -22,7 +25,7 @@ function showToast(msg, type = "info", ms = 3500) {
   }, ms);
 }
 
-/* ==================== ЗАПОЛНЕНИЕ ==================== */
+/* ==================== РЕНДЕР ТАБЛИЦ ==================== */
 function zapolnit(id, dannye, fn) {
   const tbody = document.getElementById(id);
   if (!tbody) return;
@@ -30,7 +33,8 @@ function zapolnit(id, dannye, fn) {
   if (!dannye.length) {
     const tr = document.createElement("tr");
     const td = document.createElement("td");
-    td.colSpan = tbody.closest("table").querySelectorAll("thead th").length || 1;
+    const ths = tbody.closest("table")?.querySelectorAll("thead th").length || 1;
+    td.colSpan = ths;
     td.appendChild(sozdatPustoe());
     tr.appendChild(td);
     tbody.appendChild(tr);
@@ -41,7 +45,6 @@ function zapolnit(id, dannye, fn) {
   tbody.appendChild(frag);
 }
 
-/* Заполняем всё сразу (без skeleton — для надёжности) */
 zapolnit("workers-body", rab, strokaSotrudnika);
 zapolnit("vacancies-body", vacansi, strokaVakansii);
 zapolnit("responses-body", otkliki, strokaOtklika);
@@ -72,22 +75,31 @@ const themeSelect = document.getElementById("theme-select");
 const accentInput = document.getElementById("accent-input");
 const root = document.documentElement;
 
+function hexToRgb(hex) {
+  let h = hex.replace("#", "");
+  if (h.length === 3) h = h.split("").map(c => c + c).join("");
+  const n = parseInt(h, 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+}
+
+// начальные значения
 themeSelect.value = root.getAttribute("data-theme") || "light";
-accentInput.value = localStorage.getItem("hr-accent") || "#2563eb";
+const savedAccent = localStorage.getItem("hr-accent") || "#2563eb";
+accentInput.value = savedAccent;
+root.style.setProperty("--accent", savedAccent);
+root.style.setProperty("--accent-rgb", hexToRgb(savedAccent));
 
 themeSelect.addEventListener("change", () => {
   const t = themeSelect.value;
   root.setAttribute("data-theme", t);
-  try { localStorage.setItem("hr-theme", t); } catch(e){}
+  try { localStorage.setItem("hr-theme", t); } catch (e) {}
 });
+
 accentInput.addEventListener("input", () => {
   const a = accentInput.value;
-  const h = a.replace("#","");
-  const n = parseInt(h, 16);
-  const rgb = `${(n>>16)&255},${(n>>8)&255},${n&255}`;
   root.style.setProperty("--accent", a);
-  root.style.setProperty("--accent-rgb", rgb);
-  try { localStorage.setItem("hr-accent", a); } catch(e){}
+  root.style.setProperty("--accent-rgb", hexToRgb(a));
+  try { localStorage.setItem("hr-accent", a); } catch (e) {}
 });
 
 /* ==================== МОДАЛКА ==================== */
@@ -95,18 +107,21 @@ const modal     = document.getElementById("modal");
 const modalBody = document.getElementById("modal-body");
 let lastFocused = null;
 
-function toggleModal(open, title, html) {
+function toggleModal(open, title, node) {
   if (open) {
     lastFocused = document.activeElement;
     document.getElementById("modal-title").textContent = title;
-    modalBody.innerHTML = html;
-    const first = modalBody.querySelector("input, textarea, button");
+    modalBody.replaceChildren();
+    if (node) modalBody.appendChild(node);
+    const first = modalBody.querySelector("input, textarea, button, a[href]");
     (first || modal.querySelector(".modal__close")).focus();
-  } else if (lastFocused) lastFocused.focus();
+  } else if (lastFocused) {
+    lastFocused.focus();
+  }
   modal.classList.toggle("is-open", open);
   document.body.classList.toggle("no-scroll", open);
 }
-const openModal  = (t, h) => toggleModal(true, t, h);
+const openModal  = (t, node) => toggleModal(true, t, node);
 const closeModal = ()  => toggleModal(false);
 
 modal.addEventListener("click", e => {
@@ -165,26 +180,42 @@ modalBody.addEventListener("submit", e => {
 
 /* ==================== ФОРМА ДОБАВЛЕНИЯ ==================== */
 document.getElementById("btn-add-worker").addEventListener("click", () => {
-  openModal("Новый сотрудник", `
-    <form novalidate>
-      <div class="form-row">
-        <label for="f-name">Имя *</label>
-        <input id="f-name" name="name" required minlength="2" maxlength="40">
-        <p class="form-error" aria-live="polite"></p>
-      </div>
-      <div class="form-row">
-        <label for="f-email">Email *</label>
-        <input id="f-email" name="email" type="email" required>
-        <p class="form-error" aria-live="polite"></p>
-      </div>
-      <div class="form-row">
-        <label for="f-job">Должность *</label>
-        <input id="f-job" name="job" required minlength="3" maxlength="60">
-        <p class="form-error" aria-live="polite"></p>
-      </div>
-      <button type="submit" class="btn btn--primary">Сохранить</button>
-    </form>
-  `);
+  const form = document.createElement("form");
+  form.noValidate = true;
+
+  const fields = [
+    { id: "f-name",  label: "Имя *",        name: "name",  required: true,  minlength: 2, maxlength: 40, type: "text" },
+    { id: "f-email", label: "Email *",      name: "email", required: true,  type: "email" },
+    { id: "f-job",   label: "Должность *",  name: "job",   required: true,  minlength: 3, maxlength: 60, type: "text" }
+  ];
+
+  fields.forEach(f => {
+    const row = document.createElement("div");
+    row.className = "form-row";
+    const label = document.createElement("label");
+    label.setAttribute("for", f.id);
+    label.textContent = f.label;
+    const input = document.createElement("input");
+    input.id = f.id;
+    input.name = f.name;
+    input.type = f.type;
+    if (f.required) input.required = true;
+    if (f.minlength) input.minLength = f.minlength;
+    if (f.maxlength) input.maxLength = f.maxlength;
+    const err = document.createElement("p");
+    err.className = "form-error";
+    err.setAttribute("aria-live", "polite");
+    row.append(label, input, err);
+    form.appendChild(row);
+  });
+
+  const submit = document.createElement("button");
+  submit.type = "submit";
+  submit.className = "btn btn--primary";
+  submit.textContent = "Сохранить";
+  form.appendChild(submit);
+
+  openModal("Новый сотрудник", form);
 });
 
 /* ==================== ТАБЫ ==================== */
@@ -233,13 +264,61 @@ document.querySelectorAll(".accordion__trigger").forEach(btn => {
   });
 });
 
-/* ==================== ФИЛЬТРЫ / СОРТИРОВКА / КЛИК ==================== */
+/* ==================== СОРТИРОВКА ТАБЛИЦ ==================== */
+function setupSort(table) {
+  const thead = table.tHead;
+  if (!thead) return;
+  const ths = [...thead.rows[0].cells];
+  ths.forEach((th, idx) => {
+    th.tabIndex = 0;
+    th.setAttribute("role", "button");
+    th.addEventListener("click", () => sortBy(table, idx, th));
+    th.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sortBy(table, idx, th); }
+    });
+  });
+}
+
+function sortBy(table, idx, th) {
+  const tbody = table.tBodies[0];
+  const rows = [...tbody.rows].filter(r => r.cells.length > 1 || !r.querySelector(".empty"));
+  if (!rows.length) return;
+
+  const cur = th.dataset.sort;
+  const next = cur === "asc" ? "desc" : "asc";
+  table.querySelectorAll("th[data-sort]").forEach(x => x.removeAttribute("data-sort"));
+  th.dataset.sort = next;
+
+  const dir = next === "asc" ? 1 : -1;
+
+  function key(r) {
+    const cell = r.cells[idx];
+    if (!cell) return "";
+    const t = cell.textContent.trim();
+    const num = parseFloat(t.replace(/[^\d.,-]/g, "").replace(",", "."));
+    if (!isNaN(num) && /[\d]/.test(t)) return num;
+    return t.toLowerCase();
+  }
+
+  rows.sort((a, b) => {
+    const ka = key(a), kb = key(b);
+    if (typeof ka === "number" && typeof kb === "number") return (ka - kb) * dir;
+    return String(ka).localeCompare(String(kb), "ru") * dir;
+  });
+
+  const frag = document.createDocumentFragment();
+  rows.forEach(r => frag.appendChild(r));
+  tbody.appendChild(frag);
+}
+
+document.querySelectorAll(".table").forEach(setupSort);
+
+/* ==================== ФИЛЬТРЫ / КЛИК ПО СТРОКЕ ==================== */
 document.querySelectorAll(".section").forEach(section => {
   const form  = section.querySelector(".filters");
   const table = section.querySelector(".table");
   const tbody = table?.querySelector("tbody");
   if (!tbody) return;
-  const allRows = [...tbody.rows];
 
   if (form) {
     function apply() {
@@ -247,7 +326,8 @@ document.querySelectorAll(".section").forEach(section => {
       const st = form.status?.value || "";
       const onlyOpen = form.onlyOpen?.checked || false;
       const openStatus = form.status?.dataset.open || "";
-      allRows.forEach(tr => {
+      [...tbody.rows].forEach(tr => {
+        if (tr.querySelector(".empty")) { tr.style.display = ""; return; }
         const text = tr.textContent.toLowerCase();
         const badge = tr.querySelector(".status");
         const status = badge ? badge.textContent : "";
@@ -258,6 +338,7 @@ document.querySelectorAll(".section").forEach(section => {
       });
     }
     form.addEventListener("input", apply);
+    form.addEventListener("change", apply);
     form.addEventListener("reset", () => setTimeout(apply, 0));
   }
 
@@ -267,7 +348,83 @@ document.querySelectorAll(".section").forEach(section => {
     });
   });
 
+  /* --- Делегирование клика по строкам --- */
   tbody.addEventListener("click", e => {
     const tr = e.target.closest("tr");
-    if (!tr) return;
-    const cells =
+    if (!tr || tr.querySelector(".empty")) return;
+    const id = Number(tr.dataset.id);
+    if (!id) return;
+
+    if (table.closest("#workers") || section.id === "workers") {
+      const w = rab.find(x => x.id === id);
+      if (w) openModal(`Сотрудник #${w.id}`, detalSotrudnika(w));
+    } else if (section.id === "vacancies") {
+      const v = vacansi.find(x => x.id === id);
+      if (v) openModal(`Вакансия #${v.id}`, detalVakansii(v));
+    } else if (section.id === "responses") {
+      const r = otkliki.find(x => x.id === id);
+      if (r) openModal(`Отклик #${r.id}`, detalOtklika(r));
+    }
+  });
+});
+
+/* ==================== ПАГИНАЦИЯ ОТКЛИКОВ ==================== */
+(function setupPagination() {
+  const nav = document.getElementById("responses-pagination");
+  const tbody = document.getElementById("responses-body");
+  if (!nav || !tbody) return;
+
+  const PER_PAGE = 5;
+  let page = 1;
+
+  function render() {
+    const all = [...tbody.rows].filter(r => !r.querySelector(".empty"));
+    const total = Math.max(1, Math.ceil(all.length / PER_PAGE));
+    if (page > total) page = total;
+
+    all.forEach((r, i) => {
+      const show = i >= (page - 1) * PER_PAGE && i < page * PER_PAGE;
+      r.style.display = show ? "" : "none";
+    });
+
+    nav.replaceChildren();
+    if (total <= 1) return;
+
+    function btn(label, p, opts = {}) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      if (opts.current) b.setAttribute("aria-current", "page");
+      if (opts.disabled) b.disabled = true;
+      b.addEventListener("click", () => { page = p; render(); });
+      return b;
+    }
+
+    nav.appendChild(btn("←", page - 1, { disabled: page === 1 }));
+    for (let i = 1; i <= total; i++) {
+      nav.appendChild(btn(String(i), i, { current: i === page }));
+    }
+    nav.appendChild(btn("→", page + 1, { disabled: page === total }));
+  }
+
+  // пересобираем пагинацию при фильтрации
+  const form = document.querySelector("#responses .filters");
+  if (form) {
+    form.addEventListener("input", () => { page = 1; render(); });
+    form.addEventListener("change", () => { page = 1; render(); });
+    form.addEventListener("reset", () => { page = 1; setTimeout(render, 0); });
+  }
+  render();
+})();
+
+/* ==================== СОРТИРОВКА ВНУТРИ ПАГИНАЦИИ ==================== */
+// при сортировке откликов сбрасываем страницу
+document.querySelectorAll("#responses th").forEach(th => {
+  th.addEventListener("click", () => {
+    const nav = document.getElementById("responses-pagination");
+    if (nav) {
+      const first = nav.querySelector('button[aria-current="page"]');
+      if (first) first.click();
+    }
+  });
+});

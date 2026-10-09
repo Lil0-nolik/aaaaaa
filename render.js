@@ -1,6 +1,6 @@
 function el(tag, text, cls) {
   const n = document.createElement(tag);
-  if (text != null) n.textContent = text;
+  if (text != null) n.textContent = String(text);
   if (cls) n.className = cls;
   return n;
 }
@@ -30,15 +30,20 @@ function tdEl(node, label) {
   return c;
 }
 
+function fmtZp(n) {
+  return new Intl.NumberFormat("ru-RU").format(n) + " ₽";
+}
+
 export function strokaSotrudnika(w) {
   const tr = document.createElement("tr");
+  tr.dataset.id = w.id;
   tr.append(
     td("ID", w.id),
     td("Имя", w.Name),
     td("Фамилия", w.Familia),
     td("Должность", w.Rabota),
     td("Языки", w.Iziki.join(", ")),
-    td("Зарплата", w.Zp),
+    td("Зарплата", fmtZp(w.Zp)),
     td("Почта", w.Posta)
   );
   const t = el("time", w.Data);
@@ -50,34 +55,37 @@ export function strokaSotrudnika(w) {
 
 export function strokaSotrudnikaIt(w) {
   const tr = document.createElement("tr");
+  tr.dataset.id = w.id;
   tr.append(
     td("ID", w.id),
     td("Имя", w.Name),
     td("Фамилия", w.Familia),
     td("Должность", w.Rabota),
-    td("Зарплата", w.Zp)
+    td("Зарплата", fmtZp(w.Zp))
   );
   return tr;
 }
 
 export function strokaSotrudnikaHigh(w) {
   const tr = document.createElement("tr");
+  tr.dataset.id = w.id;
   tr.append(
     td("ID", w.id),
     td("Имя", w.Name),
     td("Фамилия", w.Familia),
-    td("Зарплата", w.Zp)
+    td("Зарплата", fmtZp(w.Zp))
   );
   return tr;
 }
 
 export function strokaVakansii(v) {
   const tr = document.createElement("tr");
+  tr.dataset.id = v.id;
   tr.append(
     td("ID", v.id),
     td("Должность", v.Dolznost),
-    td("Мин. ЗП", v.MinZp),
-    td("Макс. ЗП", v.MaxZp),
+    td("Мин. ЗП", fmtZp(v.MinZp)),
+    td("Макс. ЗП", fmtZp(v.MaxZp)),
     td("Отдел", v.Otdel),
     td("Языки", v.Iziki.join(", "))
   );
@@ -90,6 +98,7 @@ export function strokaVakansii(v) {
 
 export function strokaOtklika(r) {
   const tr = document.createElement("tr");
+  tr.dataset.id = r.id;
   tr.append(
     td("ID", r.id),
     td("Сотрудник", r.RabId),
@@ -110,6 +119,85 @@ export function strokaOtklika(r) {
 export function sozdatPustoe(text = "Ничего не найдено") {
   const w = document.createElement("div");
   w.className = "empty";
-  w.innerHTML = `<div class="empty__icon" aria-hidden="true">🔍</div><p>${text}</p>`;
+  const icon = document.createElement("div");
+  icon.className = "empty__icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "🔍";
+  const p = document.createElement("p");
+  p.textContent = text;
+  w.append(icon, p);
   return w;
 }
+
+/* --- Модалка: детальная карточка --- */
+export function detalSotrudnika(w) {
+  const wrap = document.createElement("div");
+  wrap.className = "detail";
+  const rows = [
+    ["ID", w.id],
+    ["Имя", w.Name],
+    ["Фамилия", w.Familia],
+    ["Должность", w.Rabota],
+    ["Языки", w.Iziki.join(", ")],
+    ["Зарплата", fmtZp(w.Zp)],
+    ["Почта", w.Posta],
+    ["Дата приёма", w.Data],
+    ["Отдел", w.Otdel.name]
+  ];
+  rows.forEach(([k, v]) => {
+    const p = document.createElement("p");
+    const b = document.createElement("strong");
+    b.textContent = k + ": ";
+    p.append(b, document.createTextNode(String(v)));
+    wrap.appendChild(p);
+  });
+  return wrap;
+}
+
+export function detalVakansii(v) {
+  const wrap = document.createElement("div");
+  wrap.className = "detail";
+  const rows = [
+    ["ID", v.id],
+    ["Должность", v.Dolznost],
+    ["Мин. ЗП", fmtZp(v.MinZp)],
+    ["Макс. ЗП", fmtZp(v.MaxZp)],
+    ["Отдел", v.Otdel],
+    ["Языки", v.Iziki.join(", ")],
+    ["Актуальна до", v.Do],
+    ["Статус", v.Status]
+  ];
+  rows.forEach(([k, val]) => {
+    const p = document.createElement("p");
+    const b = document.createElement("strong");
+    b.textContent = k + ": ";
+    p.append(b, document.createTextNode(String(val)));
+    wrap.appendChild(p);
+  });
+  return wrap;
+}
+
+export function detalOtklika(r) {
+  const wrap = document.createElement("div");
+  wrap.className = "detail";
+  const rows = [
+    ["ID", r.id],
+    ["Сотрудник (ID)", r.RabId],
+    ["Вакансия (ID)", r.VacansiId],
+    ["Дата", r.DataOtk],
+    ["Статус", r.Status],
+    ["Комментарий", r.Koment],
+    ["Резюме", r.Rezyume],
+    ["Оценка", r.Ocenka]
+  ];
+  rows.forEach(([k, v]) => {
+    const p = document.createElement("p");
+    const b = document.createElement("strong");
+    b.textContent = k + ": ";
+    p.append(b, document.createTextNode(String(v)));
+    wrap.appendChild(p);
+  });
+  return wrap;
+}
+
+export { statusClass };
