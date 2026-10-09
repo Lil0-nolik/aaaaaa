@@ -12,7 +12,7 @@ export const rab = [
   { id: 11, Name: "Татьяна", Familia: "Орлова", Rabota: "Дата-сайентист", Iziki: ["Python", "ML", "TensorFlow"], Zp: 200000, Posta: "tatiana@mail.ru", Data: "2022-09-03", Otdel: { id: 2, name: "Аналитика" } },
   { id: 12, Name: "Андрей", Familia: "Козлов", Rabota: "Фулстек-разработчик", Iziki: ["JS", "Node.js", "React", "SQL"], Zp: 180000, Posta: "andrey@mail.ru", Data: "2018-11-25", Otdel: { id: 1, name: "ИТ" } },
   { id: 13, Name: "Светлана", Familia: "Павлова", Rabota: "Менеджер по продажам", Iziki: ["CRM", "Excel"], Zp: 90000, Posta: "svetlana@mail.ru", Data: "2023-08-07", Otdel: { id: 6, name: "Продажи" } },
-  { id: 14, Name: "Владимир", Familia: "Степанов", Rabota: "Бухгалтер", Iziki: ["Markdown", "Confluence"], Zp: 88000, Posta: "vladimir@mail.ru", Data: "2021-05-14", Otdel: { id: 1, name: "ИТ" } },
+  { id: 14, Name: "Владимир", Familia: "Степанов", Rabota: "Бухгалтер", Iziki: ["1C", "Excel"], Zp: 88000, Posta: "vladimir@mail.ru", Data: "2021-05-14", Otdel: { id: 7, name: "Финансы" } },
   { id: 15, Name: "Екатерина", Familia: "Николаева", Rabota: "Аналитик", Iziki: ["SQL", "BPMN", "Excel"], Zp: 125000, Posta: "ekaterina@mail.ru", Data: "2022-12-28", Otdel: { id: 2, name: "Аналитика" } }
 ];
 
@@ -30,7 +30,7 @@ export const vacansi = [
   { id: 11, Dolznost: "Дата-сайентист", MinZp: 160000, MaxZp: 250000, Otdel: "Аналитика", Iziki: ["Python", "ML", "TensorFlow"], Do: "2028-10-30", Status: "Отказ" },
   { id: 12, Dolznost: "Фулстек-разработчик", MinZp: 140000, MaxZp: 210000, Otdel: "ИТ", Iziki: ["JS", "Node.js", "React", "SQL"], Do: "2029-05-19", Status: "В поиске" },
   { id: 13, Dolznost: "Менеджер по продажам", MinZp: 70000, MaxZp: 150000, Otdel: "Продажи", Iziki: ["CRM", "Excel"], Do: "2030-03-10", Status: "Отказ" },
-  { id: 14, Dolznost: "Писатель", MinZp: 65000, MaxZp: 100000, Otdel: "ИТ", Iziki: ["Markdown", "Confluence"], Do: "2029-08-25", Status: "Закрыта" },
+  { id: 14, Dolznost: "Технический писатель", MinZp: 65000, MaxZp: 100000, Otdel: "ИТ", Iziki: ["Markdown", "Confluence"], Do: "2029-08-25", Status: "Закрыта" },
   { id: 15, Dolznost: "Аналитик", MinZp: 100000, MaxZp: 150000, Otdel: "Аналитика", Iziki: ["SQL", "BPMN", "Excel"], Do: "2030-05-12", Status: "В поиске" }
 ];
 
@@ -51,7 +51,7 @@ export const otkliki = [
   { id: 14, RabId: 13, VacansiId: 13, DataOtk: "2024-02-11", Status: "Отказ", Koment: "Не подошёл", Rezyume: "sveta_cv.pdf", Ocenka: 2 },
   { id: 15, RabId: 14, VacansiId: 14, DataOtk: "2024-02-16", Status: "На рассмотрении", Koment: "Тест", Rezyume: "vladimir_cv.pdf", Ocenka: 3 },
   { id: 16, RabId: 15, VacansiId: 15, DataOtk: "2024-02-22", Status: "Приглашение", Koment: "Согласование", Rezyume: "ekaterina_cv.pdf", Ocenka: 5 },
-  { id: 17, RabId: 3, VacansiId: 11, DataOtk: "2024-01-30", Status: "На рассмотрении", Koment: "Отказ", Rezyume: "anna_cv_v2.pdf", Ocenka: 4 },
+  { id: 17, RabId: 3, VacansiId: 11, DataOtk: "2024-01-30", Status: "На рассмотрении", Koment: "Повторный отклик", Rezyume: "anna_cv_v2.pdf", Ocenka: 4 },
   { id: 18, RabId: 12, VacansiId: 3, DataOtk: "2024-02-05", Status: "Отказ", Koment: "Отказ", Rezyume: "andrey_cv_v2.pdf", Ocenka: 3 },
   { id: 19, RabId: 2, VacansiId: 12, DataOtk: "2024-02-19", Status: "Приглашение", Koment: "Рекомендован", Rezyume: "ivan_cv_v2.pdf", Ocenka: 5 },
   { id: 20, RabId: 11, VacansiId: 6, DataOtk: "2024-02-24", Status: "На рассмотрении", Koment: "Первый отклик", Rezyume: "tatiana_cv.pdf", Ocenka: 4 }

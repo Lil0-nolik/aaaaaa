@@ -6,7 +6,7 @@ function el(tag, text, cls) {
 }
 
 function statusClass(s) {
-  if (s === "Приглашение" || s === "Принят") return "status status--success";
+  if (s === "Приглашение") return "status status--success";
   if (s === "В поиске") return "status status--warning";
   if (s === "Отказ" || s === "Закрыта") return "status status--danger";
   if (s === "На рассмотрении") return "status status--info";
@@ -43,9 +43,8 @@ export function strokaSotrudnika(w) {
     td("Почта", w.Posta)
   );
   const t = el("time", w.Data);
-  t.setAttribute("datetime", w.Data);
-  tr.appendChild(tdEl(t, "Дата приёма"));
-  tr.appendChild(td("Отдел", w.Otdel.name));
+  t.dateTime = w.Data;
+  tr.append(tdEl(t, "Дата"), td("Отдел", w.Otdel.name));
   return tr;
 }
 
@@ -86,25 +85,26 @@ export function strokaVakansii(v) {
     td("Языки", v.Iziki.join(", "))
   );
   const t = el("time", v.Do);
-  t.setAttribute("datetime", v.Do);
-  tr.appendChild(tdEl(t, "Актуальна до"));
-  tr.appendChild(tdEl(el("span", v.Status, statusClass(v.Status)), "Статус"));
+  t.dateTime = v.Do;
+  tr.append(tdEl(t, "До"), tdEl(el("span", v.Status, statusClass(v.Status)), "Статус"));
   return tr;
 }
 
-export function strokaOtklika(r) {
+export function strokaOtklika(r, rabMap, vacMap) {
   const tr = document.createElement("tr");
   tr.dataset.id = r.id;
+  const name = rabMap.get(r.RabId) || `#${r.RabId}`;
+  const job = vacMap.get(r.VacansiId) || `#${r.VacansiId}`;
   tr.append(
     td("ID", r.id),
-    td("Сотрудник", r.RabId),
-    td("Вакансия", r.VacansiId)
+    td("Сотрудник", name),
+    td("Вакансия", job)
   );
   const t = el("time", r.DataOtk);
-  t.setAttribute("datetime", r.DataOtk);
-  tr.appendChild(tdEl(t, "Дата"));
-  tr.appendChild(tdEl(el("span", r.Status, statusClass(r.Status)), "Статус"));
+  t.dateTime = r.DataOtk;
   tr.append(
+    tdEl(t, "Дата"),
+    tdEl(el("span", r.Status, statusClass(r.Status)), "Статус"),
     td("Комментарий", r.Koment),
     td("Резюме", r.Rezyume),
     td("Оценка", r.Ocenka)
@@ -115,81 +115,53 @@ export function strokaOtklika(r) {
 export function sozdatPustoe(text = "Ничего не найдено") {
   const w = document.createElement("div");
   w.className = "empty";
-  const icon = document.createElement("div");
-  icon.className = "empty__icon";
+  const icon = el("div", "🔍", "empty__icon");
   icon.setAttribute("aria-hidden", "true");
-  icon.textContent = "🔍";
-  const p = document.createElement("p");
-  p.textContent = text;
-  w.append(icon, p);
+  w.append(icon, el("p", text));
   return w;
 }
 
 export function detalSotrudnika(w) {
-  const wrap = document.createElement("div");
-  wrap.className = "detail";
-  const rows = [
-    ["ID", w.id],
-    ["Имя", w.Name],
-    ["Фамилия", w.Familia],
-    ["Должность", w.Rabota],
-    ["Языки", w.Iziki.join(", ")],
-    ["Зарплата", fmtZp(w.Zp)],
-    ["Почта", w.Posta],
-    ["Дата приёма", w.Data],
-    ["Отдел", w.Otdel.name]
-  ];
-  rows.forEach(([k, v]) => {
+  const wrap = el("div", null, "detail");
+  [
+    ["ID", w.id], ["Имя", w.Name], ["Фамилия", w.Familia],
+    ["Должность", w.Rabota], ["Языки", w.Iziki.join(", ")],
+    ["Зарплата", fmtZp(w.Zp)], ["Почта", w.Posta],
+    ["Дата приёма", w.Data], ["Отдел", w.Otdel.name]
+  ].forEach(([k, v]) => {
     const p = document.createElement("p");
-    const b = document.createElement("strong");
-    b.textContent = k + ": ";
-    p.append(b, document.createTextNode(String(v)));
+    p.append(el("strong", k + ": "), document.createTextNode(String(v)));
     wrap.appendChild(p);
   });
   return wrap;
 }
 
 export function detalVakansii(v) {
-  const wrap = document.createElement("div");
-  wrap.className = "detail";
-  const rows = [
-    ["ID", v.id],
-    ["Должность", v.Dolznost],
-    ["Мин. ЗП", fmtZp(v.MinZp)],
-    ["Макс. ЗП", fmtZp(v.MaxZp)],
-    ["Отдел", v.Otdel],
-    ["Языки", v.Iziki.join(", ")],
-    ["Актуальна до", v.Do],
-    ["Статус", v.Status]
-  ];
-  rows.forEach(([k, val]) => {
+  const wrap = el("div", null, "detail");
+  [
+    ["ID", v.id], ["Должность", v.Dolznost],
+    ["Мин. ЗП", fmtZp(v.MinZp)], ["Макс. ЗП", fmtZp(v.MaxZp)],
+    ["Отдел", v.Otdel], ["Языки", v.Iziki.join(", ")],
+    ["Актуальна до", v.Do], ["Статус", v.Status]
+  ].forEach(([k, v]) => {
     const p = document.createElement("p");
-    const b = document.createElement("strong");
-    b.textContent = k + ": ";
-    p.append(b, document.createTextNode(String(val)));
+    p.append(el("strong", k + ": "), document.createTextNode(String(v)));
     wrap.appendChild(p);
   });
   return wrap;
 }
 
-export function detalOtklika(r) {
-  const wrap = document.createElement("div");
-  wrap.className = "detail";
-  const rows = [
+export function detalOtklika(r, rabMap, vacMap) {
+  const wrap = el("div", null, "detail");
+  [
     ["ID", r.id],
-    ["Сотрудник (ID)", r.RabId],
-    ["Вакансия (ID)", r.VacansiId],
-    ["Дата", r.DataOtk],
-    ["Статус", r.Status],
-    ["Комментарий", r.Koment],
-    ["Резюме", r.Rezyume],
-    ["Оценка", r.Ocenka]
-  ];
-  rows.forEach(([k, v]) => {
+    ["Сотрудник", rabMap.get(r.RabId) || r.RabId],
+    ["Вакансия", vacMap.get(r.VacansiId) || r.VacansiId],
+    ["Дата", r.DataOtk], ["Статус", r.Status],
+    ["Комментарий", r.Koment], ["Резюме", r.Rezyume], ["Оценка", r.Ocenka]
+  ].forEach(([k, v]) => {
     const p = document.createElement("p");
-    const b = document.createElement("strong");
-    b.textContent = k + ": ";
-    p.append(b, document.createTextNode(String(v)));
+    p.append(el("strong", k + ": "), document.createTextNode(String(v)));
     wrap.appendChild(p);
   });
   return wrap;
