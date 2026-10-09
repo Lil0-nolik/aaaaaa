@@ -1,10 +1,14 @@
 import { rab, vacansi, otkliki } from "./data.js";
 import {
-  strokaSotrudnika, strokaSotrudnikaIt, strokaSotrudnikaHigh,
-  strokaVakansii, strokaOtklika, sozdatPustoe
+  strokaSotrudnika,
+  strokaSotrudnikaIt,
+  strokaSotrudnikaHigh,
+  strokaVakansii,
+  strokaOtklika,
+  sozdatPustoe
 } from "./render.js";
 
-/* ===== TOAST ===== */
+/* ==================== TOAST ==================== */
 const toastsBox = document.getElementById("toasts");
 function showToast(msg, type = "info", ms = 3500) {
   const el = document.createElement("div");
@@ -18,7 +22,7 @@ function showToast(msg, type = "info", ms = 3500) {
   }, ms);
 }
 
-/* ===== ЗАПОЛНЕНИЕ ===== */
+/* ==================== ЗАПОЛНЕНИЕ ==================== */
 function zapolnit(id, dannye, fn) {
   const tbody = document.getElementById(id);
   if (!tbody) return;
@@ -37,34 +41,14 @@ function zapolnit(id, dannye, fn) {
   tbody.appendChild(frag);
 }
 
-/* ===== SKELETON ===== */
-function withSkeleton(container, renderFn, delay = 400) {
-  const table = container.querySelector(".table");
-  if (!table) return renderFn();
-  const sk = document.createElement("div");
-  sk.className = "skeleton";
-  sk.setAttribute("aria-hidden", "true");
-  sk.innerHTML = `<div class="skeleton__row"></div><div class="skeleton__row"></div>
-                  <div class="skeleton__row"></div><div class="skeleton__row"></div>`;
-  table.style.display = "none";
-  container.appendChild(sk);
-  setTimeout(() => { sk.remove(); table.style.display = ""; renderFn(); }, delay);
-}
-
-document.querySelectorAll("[data-skeleton]").forEach(container => {
-  withSkeleton(container, () => {
-    const id = container.querySelector("tbody")?.id;
-    if (id === "workers-body")   zapolnit(id, rab, strokaSotrudnika);
-    if (id === "vacancies-body") zapolnit(id, vacansi, strokaVakansii);
-    if (id === "responses-body") zapolnit(id, otkliki, strokaOtklika);
-  });
-});
-
-/* Вкладки табов */
+/* Заполняем всё сразу (без skeleton — для надёжности) */
+zapolnit("workers-body", rab, strokaSotrudnika);
+zapolnit("vacancies-body", vacansi, strokaVakansii);
+zapolnit("responses-body", otkliki, strokaOtklika);
 zapolnit("workers-it-body", rab.filter(w => w.Otdel.name === "ИТ"), strokaSotrudnikaIt);
 zapolnit("workers-high-body", rab.filter(w => w.Zp > 150000), strokaSotrudnikaHigh);
 
-/* ===== БУРГЕР-МЕНЮ ===== */
+/* ==================== БУРГЕР-МЕНЮ ==================== */
 const burger  = document.querySelector(".burger");
 const sidebar = document.querySelector(".sidebar");
 const overlay = document.getElementById("overlay");
@@ -83,7 +67,7 @@ overlay.addEventListener("click", () => toggleMenu(false));
 sidebar.querySelectorAll("a").forEach(a =>
   a.addEventListener("click", () => toggleMenu(false)));
 
-/* ===== ТЕМА / АКЦЕНТ ===== */
+/* ==================== ТЕМА / АКЦЕНТ ==================== */
 const themeSelect = document.getElementById("theme-select");
 const accentInput = document.getElementById("accent-input");
 const root = document.documentElement;
@@ -106,7 +90,7 @@ accentInput.addEventListener("input", () => {
   try { localStorage.setItem("hr-accent", a); } catch(e){}
 });
 
-/* ===== МОДАЛКА ===== */
+/* ==================== МОДАЛКА ==================== */
 const modal     = document.getElementById("modal");
 const modalBody = document.getElementById("modal-body");
 let lastFocused = null;
@@ -129,7 +113,6 @@ modal.addEventListener("click", e => {
   if (e.target === modal || e.target.closest(".modal__close")) closeModal();
 });
 
-/* Escape + focus-trap */
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && sidebar.classList.contains("is-open")) {
     toggleMenu(false); burger.focus(); return;
@@ -144,7 +127,7 @@ document.addEventListener("keydown", e => {
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 });
 
-/* ===== ВАЛИДАЦИЯ ===== */
+/* ==================== ВАЛИДАЦИЯ ==================== */
 function validateField(input) {
   const row = input.closest(".form-row");
   const err = row?.querySelector(".form-error");
@@ -180,7 +163,7 @@ modalBody.addEventListener("submit", e => {
   closeModal();
 });
 
-/* ===== ФОРМА ДОБАВЛЕНИЯ ===== */
+/* ==================== ФОРМА ДОБАВЛЕНИЯ ==================== */
 document.getElementById("btn-add-worker").addEventListener("click", () => {
   openModal("Новый сотрудник", `
     <form novalidate>
@@ -204,9 +187,10 @@ document.getElementById("btn-add-worker").addEventListener("click", () => {
   `);
 });
 
-/* ===== ТАБЫ ===== */
+/* ==================== ТАБЫ ==================== */
 document.querySelectorAll(".tabs").forEach(tabs => {
   const list = tabs.querySelector('[role="tablist"]');
+  if (!list) return;
   const btns = [...list.querySelectorAll('[role="tab"]')];
   const panels = btns.map(b => document.getElementById(b.getAttribute("aria-controls")));
 
@@ -216,8 +200,10 @@ document.querySelectorAll(".tabs").forEach(tabs => {
       b.classList.toggle("is-active", on);
       b.setAttribute("aria-selected", String(on));
       b.tabIndex = on ? 0 : -1;
-      panels[k].hidden = !on;
-      panels[k].classList.toggle("is-active", on);
+      if (panels[k]) {
+        panels[k].hidden = !on;
+        panels[k].classList.toggle("is-active", on);
+      }
     });
     if (focus) btns[i].focus();
   }
@@ -237,17 +223,17 @@ document.querySelectorAll(".tabs").forEach(tabs => {
   });
 });
 
-/* ===== АККОРДЕОН ===== */
+/* ==================== АККОРДЕОН ==================== */
 document.querySelectorAll(".accordion__trigger").forEach(btn => {
   btn.addEventListener("click", () => {
     const open = btn.getAttribute("aria-expanded") === "true";
     btn.setAttribute("aria-expanded", String(!open));
     const panel = document.getElementById(btn.getAttribute("aria-controls"));
-    panel.hidden = open;
+    if (panel) panel.hidden = open;
   });
 });
 
-/* ===== СЕКЦИИ: фильтры, сортировка, клик ===== */
+/* ==================== ФИЛЬТРЫ / СОРТИРОВКА / КЛИК ==================== */
 document.querySelectorAll(".section").forEach(section => {
   const form  = section.querySelector(".filters");
   const table = section.querySelector(".table");
@@ -255,7 +241,6 @@ document.querySelectorAll(".section").forEach(section => {
   if (!tbody) return;
   const allRows = [...tbody.rows];
 
-  /* Фильтры */
   if (form) {
     function apply() {
       const q = form.q?.value.trim().toLowerCase() || "";
@@ -276,87 +261,13 @@ document.querySelectorAll(".section").forEach(section => {
     form.addEventListener("reset", () => setTimeout(apply, 0));
   }
 
-  /* Переключение таблица/карточки */
   section.querySelectorAll('input[type="radio"]').forEach(r => {
     r.addEventListener("change", () => {
       if (r.checked) table.classList.toggle("is-cards", r.value === "cards");
     });
   });
 
-  /* Клик по строке → модалка */
   tbody.addEventListener("click", e => {
     const tr = e.target.closest("tr");
     if (!tr) return;
-    const cells = [...tr.children].map(c => c.textContent.trim());
-    openModal("Детали записи", cells.map(c => `<p>${c}</p>`).join(""));
-  });
-
-  /* Сортировка по th */
-  table.querySelectorAll("th").forEach((th, i) => {
-    th.dataset.sort = "";
-    th.addEventListener("click", () => {
-      const dir = th.dataset.sort === "asc" ? "desc" : "asc";
-      th.closest("tr").querySelectorAll("th").forEach(x => x.dataset.sort = "");
-      th.dataset.sort = dir;
-
-      [...tbody.rows]
-        .sort((a, b) => {
-          const A = a.cells[i].textContent.trim();
-          const B = b.cells[i].textContent.trim();
-          const n = parseFloat(A) - parseFloat(B);
-          const cmp = !isNaN(n) ? n : A.localeCompare(B, "ru");
-          return dir === "asc" ? cmp : -cmp;
-        })
-        .forEach(r => tbody.appendChild(r));
-    });
-  });
-});
-
-/* ===== ПАГИНАЦИЯ ОТКЛИКОВ ===== */
-(function initPagination() {
-  const pag = document.getElementById("responses-pagination");
-  const tbody = document.getElementById("responses-body");
-  if (!pag || !tbody) return;
-
-  const PER_PAGE = 5;
-  let current = 1;
-  const totalPages = Math.ceil(otkliki.length / PER_PAGE);
-
-  function render() {
-    zapolnit("responses-body",
-      otkliki.slice((current - 1) * PER_PAGE, current * PER_PAGE),
-      strokaOtklika);
-    renderBtns();
-  }
-
-  function renderBtns() {
-    pag.replaceChildren();
-    const prev = document.createElement("button");
-    prev.type = "button";
-    prev.textContent = "←";
-    prev.disabled = current === 1;
-    prev.setAttribute("aria-label", "Предыдущая страница");
-    prev.addEventListener("click", () => { current--; render(); });
-    pag.appendChild(prev);
-
-    for (let i = 1; i <= totalPages; i++) {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = i;
-      if (i === current) b.setAttribute("aria-current", "page");
-      b.setAttribute("aria-label", `Страница ${i}`);
-      b.addEventListener("click", () => { current = i; render(); });
-      pag.appendChild(b);
-    }
-
-    const next = document.createElement("button");
-    next.type = "button";
-    next.textContent = "→";
-    next.disabled = current === totalPages;
-    next.setAttribute("aria-label", "Следующая страница");
-    next.addEventListener("click", () => { current++; render(); });
-    pag.appendChild(next);
-  }
-
-  render();
-})();
+    const cells =

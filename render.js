@@ -7,9 +7,11 @@ function el(tag, text, cls) {
 
 function statusClass(s) {
   switch (s) {
-    case "Приглашение": case "Принят": return "status status--success";
-    case "В поиске": return "status status--warning";
-    case "Отказ": case "Закрыта": return "status status--danger";
+    case "Приглашение":
+    case "Принят":          return "status status--success";
+    case "В поиске":        return "status status--warning";
+    case "Отказ":
+    case "Закрыта":         return "status status--danger";
     case "На рассмотрении": return "status status--info";
   }
   return "status";
@@ -20,6 +22,7 @@ function td(label, value) {
   c.dataset.label = label;
   return c;
 }
+
 function tdEl(node, label) {
   const c = document.createElement("td");
   c.dataset.label = label;
@@ -30,9 +33,13 @@ function tdEl(node, label) {
 export function strokaSotrudnika(w) {
   const tr = document.createElement("tr");
   tr.append(
-    td("ID", w.id), td("Имя", w.Name), td("Фамилия", w.Familia),
-    td("Должность", w.Rabota), td("Языки", w.Iziki.join(", ")),
-    td("Зарплата", w.Zp), td("Почта", w.Posta)
+    td("ID", w.id),
+    td("Имя", w.Name),
+    td("Фамилия", w.Familia),
+    td("Должность", w.Rabota),
+    td("Языки", w.Iziki.join(", ")),
+    td("Зарплата", w.Zp),
+    td("Почта", w.Posta)
   );
   const t = el("time", w.Data);
   t.setAttribute("datetime", w.Data);
@@ -43,25 +50,36 @@ export function strokaSotrudnika(w) {
 
 export function strokaSotrudnikaIt(w) {
   const tr = document.createElement("tr");
-  tr.append(td("ID", w.id), td("Имя", w.Name),
-            td("Фамилия", w.Familia), td("Должность", w.Rabota),
-            td("Зарплата", w.Zp));
+  tr.append(
+    td("ID", w.id),
+    td("Имя", w.Name),
+    td("Фамилия", w.Familia),
+    td("Должность", w.Rabota),
+    td("Зарплата", w.Zp)
+  );
   return tr;
 }
 
 export function strokaSotrudnikaHigh(w) {
   const tr = document.createElement("tr");
-  tr.append(td("ID", w.id), td("Имя", w.Name),
-            td("Фамилия", w.Familia), td("Зарплата", w.Zp));
+  tr.append(
+    td("ID", w.id),
+    td("Имя", w.Name),
+    td("Фамилия", w.Familia),
+    td("Зарплата", w.Zp)
+  );
   return tr;
 }
 
 export function strokaVakansii(v) {
   const tr = document.createElement("tr");
   tr.append(
-    td("ID", v.id), td("Должность", v.Dolznost),
-    td("Мин. ЗП", v.MinZp), td("Макс. ЗП", v.MaxZp),
-    td("Отдел", v.Otdel), td("Языки", v.Iziki.join(", "))
+    td("ID", v.id),
+    td("Должность", v.Dolznost),
+    td("Мин. ЗП", v.MinZp),
+    td("Макс. ЗП", v.MaxZp),
+    td("Отдел", v.Otdel),
+    td("Языки", v.Iziki.join(", "))
   );
   const t = el("time", v.Do);
   t.setAttribute("datetime", v.Do);
@@ -73,7 +91,8 @@ export function strokaVakansii(v) {
 export function strokaOtklika(r) {
   const tr = document.createElement("tr");
   tr.append(
-    td("ID", r.id), td("Сотрудник", r.RabId),
+    td("ID", r.id),
+    td("Сотрудник", r.RabId),
     td("Вакансия", r.VacansiId)
   );
   const t = el("time", r.DataOtk);
@@ -81,7 +100,8 @@ export function strokaOtklika(r) {
   tr.appendChild(tdEl(t, "Дата"));
   tr.appendChild(tdEl(el("span", r.Status, statusClass(r.Status)), "Статус"));
   tr.append(
-    td("Комментарий", r.Koment), td("Резюме", r.Rezyume),
+    td("Комментарий", r.Koment),
+    td("Резюме", r.Rezyume),
     td("Оценка", r.Ocenka)
   );
   return tr;

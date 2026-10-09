@@ -7,18 +7,20 @@
   <script>
     (function () {
       var T = "hr-theme", A = "hr-accent", root = document.documentElement;
-      function rgb(hex){var h=hex.replace("#","");
-        if(h.length===3)h=h.split("").map(c=>c+c).join("");
-        var n=parseInt(h,16);
-        return ((n>>16)&255)+","+((n>>8)&255)+","+(n&255);}
-      var s=null; try{s=localStorage.getItem(T)}catch(e){}
-      root.setAttribute("data-theme", s || (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
-      var a=null; try{a=localStorage.getItem(A)}catch(e){}
-      if(a){root.style.setProperty("--accent",a);root.style.setProperty("--accent-rgb",rgb(a));}
+      function rgb(hex){
+        var h = hex.replace("#","");
+        if (h.length === 3) h = h.split("").map(c => c + c).join("");
+        var n = parseInt(h, 16);
+        return ((n>>16)&255) + "," + ((n>>8)&255) + "," + (n&255);
+      }
+      var s = null; try { s = localStorage.getItem(T); } catch(e){}
+      root.setAttribute("data-theme", s || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+      var a = null; try { a = localStorage.getItem(A); } catch(e){}
+      if (a) { root.style.setProperty("--accent", a); root.style.setProperty("--accent-rgb", rgb(a)); }
     })();
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -72,7 +74,6 @@
         <button type="button" class="btn btn--primary" id="btn-add-worker">+ Добавить</button>
       </div>
 
-      <!-- ТАБЫ -->
       <div class="tabs" id="tabs-workers">
         <div class="tabs__list" role="tablist" aria-label="Разделы сотрудников">
           <button class="tabs__tab is-active" role="tab" id="tab-all" aria-selected="true" aria-controls="panel-all" tabindex="0">Все</button>
@@ -85,8 +86,10 @@
             <label>Поиск <input type="search" name="q" placeholder="Введите текст…" aria-label="Поиск"></label>
             <label>Статус
               <select name="status" aria-label="Статус">
-                <option value="">Все</option><option>В поиске</option>
-                <option>Отказ</option><option>Закрыта</option>
+                <option value="">Все</option>
+                <option>В поиске</option>
+                <option>Отказ</option>
+                <option>Закрыта</option>
               </select>
             </label>
             <label class="check"><input type="checkbox" name="onlyOpen"><span class="check__box" aria-hidden="true"></span> Только открытые</label>
@@ -94,7 +97,7 @@
             <label class="check"><input type="radio" name="view-w" value="cards"><span class="check__box" aria-hidden="true"></span> Карточки</label>
             <button type="reset">Сбросить</button>
           </form>
-          <div class="table-wrap" data-skeleton>
+          <div class="table-wrap">
             <table class="table">
               <caption>Список сотрудников</caption>
               <thead><tr>
@@ -135,8 +138,10 @@
         <label>Поиск <input type="search" name="q" placeholder="Введите текст…" aria-label="Поиск"></label>
         <label>Статус
           <select name="status" data-open="В поиске" aria-label="Статус">
-            <option value="">Все</option><option>В поиске</option>
-            <option>Отказ</option><option>Закрыта</option>
+            <option value="">Все</option>
+            <option>В поиске</option>
+            <option>Отказ</option>
+            <option>Закрыта</option>
           </select>
         </label>
         <label class="check"><input type="checkbox" name="onlyOpen"><span class="check__box" aria-hidden="true"></span> Только открытые</label>
@@ -144,7 +149,7 @@
         <label class="check"><input type="radio" name="view-v" value="cards"><span class="check__box" aria-hidden="true"></span> Карточки</label>
         <button type="reset">Сбросить</button>
       </form>
-      <div class="table-wrap" data-skeleton>
+      <div class="table-wrap">
         <table class="table">
           <caption>Вакансии</caption>
           <thead><tr>
@@ -160,7 +165,6 @@
     <section id="responses" class="section">
       <h2>Отклики</h2>
 
-      <!-- АККОРДЕОН -->
       <div class="accordion">
         <button type="button" class="accordion__trigger" aria-expanded="false" aria-controls="acc-filters">
           <span>Фильтры</span><span class="accordion__icon" aria-hidden="true">▾</span>
@@ -170,8 +174,10 @@
             <label>Поиск <input type="search" name="q" placeholder="Введите текст…" aria-label="Поиск"></label>
             <label>Статус
               <select name="status" data-open="Приглашение" aria-label="Статус">
-                <option value="">Все</option><option>На рассмотрении</option>
-                <option>Приглашение</option><option>Отказ</option>
+                <option value="">Все</option>
+                <option>На рассмотрении</option>
+                <option>Приглашение</option>
+                <option>Отказ</option>
               </select>
             </label>
             <label class="check"><input type="checkbox" name="onlyOpen"><span class="check__box" aria-hidden="true"></span> Только открытые</label>
@@ -182,7 +188,7 @@
         </div>
       </div>
 
-      <div class="table-wrap" data-skeleton>
+      <div class="table-wrap">
         <table class="table">
           <caption>Отклики кандидатов</caption>
           <thead><tr>
@@ -200,7 +206,6 @@
 
   <footer class="footer"><p>© 2026 HR-панель</p></footer>
 
-  <!-- МОДАЛКА -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal__box">
       <div class="modal__head">
@@ -214,6 +219,6 @@
     </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
