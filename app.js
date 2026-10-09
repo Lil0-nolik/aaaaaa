@@ -94,7 +94,6 @@ accentInput.addEventListener("input", () => {
   localStorage.setItem("hr-accent", a);
 });
 
-// System theme change
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
   if (!localStorage.getItem("hr-theme")) {
     root.setAttribute("data-theme", e.matches ? "dark" : "light");
@@ -186,6 +185,13 @@ modalBody.addEventListener("submit", e => {
   closeModal();
 });
 
+function el(tag, text, cls) {
+  const n = document.createElement(tag);
+  if (text != null) n.textContent = String(text);
+  if (cls) n.className = cls;
+  return n;
+}
+
 /* Add worker */
 document.getElementById("btn-add-worker").addEventListener("click", () => {
   const form = document.createElement("form");
@@ -216,13 +222,6 @@ document.getElementById("btn-add-worker").addEventListener("click", () => {
   form.appendChild(submit);
   openModal("Новый сотрудник", form);
 });
-
-function el(tag, text, cls) {
-  const n = document.createElement(tag);
-  if (text != null) n.textContent = String(text);
-  if (cls) n.className = cls;
-  return n;
-}
 
 /* Tabs */
 document.querySelectorAll(".tabs").forEach(tabs => {
@@ -272,3 +271,57 @@ document.querySelectorAll(".accordion__trigger").forEach(btn => {
 
 /* Filters + view toggle + row click */
 document.querySelectorAll(".section").forEach(section => {
+  const form = section.querySelector(".filters");
+  const table = section.querySelector(".table");
+  const tbody = table?.querySelector("tbody");
+  if (!tbody) return;
+
+  if (form) {
+    function apply() {
+      const q = form.q?.value.trim().toLowerCase() || "";
+      const st = form.status?.value || "";
+      const onlyOpen = form.onlyOpen?.checked || false;
+      const openStatus = form.status?.dataset.open || "";
+      [...tbody.rows].forEach(tr => {
+        if (tr.querySelector(".empty")) {
+          tr.style.display = "";
+          return;
+        }
+        const text = tr.textContent.toLowerCase();
+        const badge = tr.querySelector(".status");
+        const status = badge ? badge.textContent : "";
+        const ok = (!q || text.includes(q)) &&
+                   (!st || status === st) &&
+                   (!onlyOpen || status === openStatus);
+        tr.style.display = ok ? "" : "none";
+      });
+    }
+    form.addEventListener("input", apply);
+    form.addEventListener("change", apply);
+    form.addEventListener("reset", () => setTimeout(apply, 0));
+  }
+
+  section.querySelectorAll('input[type="radio"][name^="view"]').forEach(r => {
+    r.addEventListener("change", () => {
+      if (r.checked) table.classList.toggle("is-cards", r.value === "cards");
+    });
+  });
+
+  tbody.addEventListener("click", e => {
+    const tr = e.target.closest("tr");
+    if (!tr || tr.querySelector(".empty")) return;
+    const id = Number(tr.dataset.id);
+    if (!id) return;
+
+    if (section.id === "workers") {
+      const w = rab.find(x => x.id === id);
+      if (w) openModal(`Сотрудник #${w.id}`, detalSotrudnika(w));
+    } else if (section.id === "vacancies") {
+      const v = vacansi.find(x => x.id === id);
+      if (v) openModal(`Вакансия #${v.id}`, detalVakansii(v));
+    } else if (section.id === "responses") {
+      const r = otkliki.find(x => x.id === id);
+      if (r) openModal(`Отклик #${r.id}`, detalOtklika(r, rabMap, vacMap));
+    }
+  });
+});
